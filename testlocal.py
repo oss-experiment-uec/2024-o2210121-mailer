@@ -1,13 +1,23 @@
-import asyncio
-from aiosmtpd.controller import Controller
-from aiosmtpd.handlers import Debugging
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+import os.path
 
-async def main():
-    controller = Controller(Debugging(), hostname='localhost', port=1025)
-    controller.start()
-    print("SMTP server is running on localhost:1025")
-    await asyncio.sleep(3600)  # 1時間動作
-    controller.stop()
+SCOPES = ['https://mail.google.com/']
+
+def main():
+    creds = None
+    if os.path.exists('token.json'):
+        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                'credentials.json', SCOPES)
+            creds = flow.run_local_server(port=0)
+        with open('token.json', 'w') as token:
+            token.write(creds.to_json())
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    main()
