@@ -8,7 +8,7 @@ mailer = Mailer(dict(
                 port=587,
                 tls='starttls',
                 username='ruri9752@gmail.com',
-                password='Mikusururi1024')))
+                password='Mikusu_Ruri1024')))
 mailer.start()
 
 message = Message(author="ruri9572@gmail.com", to="iferi0103@gmail.com")
